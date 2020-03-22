@@ -1,0 +1,5 @@
+<h1>Personal Projects Page of <%=user.username%></h1>
+<%projects.forEach(function(project){%>
+<li><strong><%= project.title %></strong>- <%= project.task %></li>
+<% });%>
+<a href="/personal/add"> Add Personal Project</a>
