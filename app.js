@@ -9,11 +9,27 @@ var express = require("express"),
     Projects = require("./models/P_Project");
 //cleanDb();
 
-mongoose.connect("mongodb://localhost/test_app",{useNewUrlParser: true, useUnifiedTopology: true});
-mongoose.set('useNewUrlParser', true);
-mongoose.set('useFindAndModify', false);
-mongoose.set('useCreateIndex', true);
-mongoose.set('useUnifiedTopology', true);
+const MongoClient = require('mongodb').MongoClient;
+
+// replace the uri string with your connection string.
+const uri = "mongodb+srv://manan:Manangupta852@@cluster0-hjcqz.mongodb.net/test?retryWrites=true&w=majority"
+MongoClient.connect(uri, function(err, client) {
+   if(err) {
+        console.log('Error occurred while connecting to MongoDB Atlas...\n',err);
+   }
+   console.log('Connected to MongoDB...');
+   const collection = client.db("test").collection("devices");
+   // perform actions on the collection object
+   client.close();
+});
+
+mongoose.connect(uri, {useNewUrlParser: true, useUnifiedTopology: true});
+
+//mongoose.connect("mongodb://localhost/test_app",{useNewUrlParser: true, useUnifiedTopology: true});
+//mongoose.set('useNewUrlParser', true);
+//mongoose.set('useFindAndModify', false);
+//mongoose.set('useCreateIndex', true);
+//mongoose.set('useUnifiedTopology', true);
 
 var app = express();
 
@@ -124,36 +140,39 @@ var Task = require("./models/task")
 // var middleware = require("../middleware");
 
 app.get("/GroupProjects",function(req,res){
-    Group_Projects.find({}).populate('tasks').exec(function(err,project){
-        if(err) console.log(err);
-        else{
-            console.log(project);
-            res.render("GroupProjects",{username:req.user.username,projects:project});
-        }
-    })
+    Task.find({user:req.user},function(err,t){
+        Group_Projects.find({tasks:t}).populate('tasks').exec(function(err,p){
+            if(err) console.log(err);
+            else{
+                console.log(p);
+                res.render("GroupProjects",{username:req.user.username,projects:p});
+            }
+        })
+        });
     });
 
-// app.get("/group",function(req,res){
-//     Group_Projects.find({}).populate('tasks').exec(function(err,projects){
-//         if(err) console.log(err);
-//         else{
-//             console.log(projects);
-//             res.render("groups",{tasks:projects});
-//         }
-//     });
-// });
 
-// app.post("/group",function(req,res){
-//     Group_Projects.create({
-//         title : req.body.title
-//     },function(err,group){
-//         if(err) console.log(err);
-//         else{
-//             res.redirect("/GroupProjects");
-//         }
-//     });
+app.get("/group",function(req,res){
+    Group_Projects.find({}).populate('tasks').exec(function(err,projects){
+        if(err) console.log(err);
+        else{
+            console.log(projects);
+            res.render("groups",{tasks:projects});
+        }
+    });
+});
 
-// });
+app.post("/group",function(req,res){
+    Group_Projects.create({
+        title : req.body.title
+    },function(err,group){
+        if(err) console.log(err);
+        else{
+            res.redirect("/GroupProjects");
+        }
+    });
+
+});
 
 app.get("/group/add",function(req,res){
     res.render("addGroup");
@@ -165,23 +184,31 @@ app.get("/group/:id/addTask",function(req,res){
 });
 
 app.post("/group/:id/tasks",function(req,res){
-    User.find({id:req.body.id},function(err,user_f){
-        Task.create({
-            user: user_f,
-            task: req.body.task
-        },function(err,t){
-            if(err) console.log(err);
-            else
-            {
-                console.log(t);
-                Group_Projects.findById({id:req.params.id},function(err,project){
-                    project.tasks.push(t);
-                });
-                res.redirect("/GroupProjects");
-            }
+    User.findOne({id:req.body.Id},function(err,user_f){
+        if(err) console.log(err);
+        else
+        {
+            Task.create({
+                user: user_f,
+                task: req.body.task
+            },function(err,t){
+                if(err) console.log(err);
+                else
+                {
+                    console.log(t);
+                    Group_Projects.findById(req.params.id,function(err,project){
+                        if(err) console.log(err);
+                        else{
+                            project.tasks.push(t);
+                            project.save();
+                            console.log(project);
+                        }
+                    });
+                    res.redirect("/GroupProjects");
+                }
+            });
+        }
         });
-    })
-
 })
 
 app.listen(3000,function(){

@@ -2,6 +2,6 @@
 
 <%projects.forEach(function(project){%>
         <h2><a href="/group/<%=project._id%>/addTask"><%=project.title%></a></h4>
-        <p><%=project.tasks%></p>
-
+        <li><strong><%=project.tasks%></strong></li>
 <%});%>
+
