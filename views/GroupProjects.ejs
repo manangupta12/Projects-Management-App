@@ -1,7 +1,8 @@
+<%- include('partials/header') %>
 <h1> List of all Group projects of <%=username%></h1>
 
 <%projects.forEach(function(project){%>
         <h2><a href="/group/<%=project._id%>/addTask"><%=project.title%></a></h4>
         <li><strong><%=project.tasks%></strong></li>
 <%});%>
-
+<%- include('partials/footer') %>

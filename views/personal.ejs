@@ -1,5 +1,23 @@
-<h1>Personal Projects Page of <%=user.username%></h1>
-<%projects.forEach(function(project){%>
-<li><strong><%= project.title %></strong>- <%= project.task %></li>
-<% });%>
-<a href="/personal/add"> Add Personal Project</a>
+<%- include('partials/header') %>
+<div class = "jumbotron" style ="padding-top: 100px;text-align: center;background-color:white">
+    <h2>All Personal Projects Page of <%=user.username%></h2>
+</div>
+<div class="container " style="padding-top:50px">
+    <div class="card-deck">
+        <%projects.forEach(function(project){%>
+        <div class="card text-white bg-primary mb-3" style="max-width: 30rem;max-height: 50rem;">
+            <div style="color:wheat;font-size: large;" class="card-header"><strong><%= project.title %></strong></div>
+            <div class="card-body">
+                <h5 class="card-title"></h5>
+                <li class="card-text"><%= project.task %></li>
+            </div>
+        </div>
+        <%});%>
+    </div>
+</div>
+
+</div>
+<div class = "jumbotron" style="background-color:white; text-align:center;">
+    <a href="/personal/add" class="btn btn-outline-success"><strong> Add Project</strong></a>
+    </div>
+<%- include('partials/footer') %>

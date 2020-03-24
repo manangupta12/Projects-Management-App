@@ -1,7 +1,15 @@
-<form action="/personal" method = "POST">
-    <div class="row">
-        <input type="text" name="title" placeholder="Title of the project">
-        <input type="text" name="task" placeholder="Task">
-        <button type="submit"> Submit </button>
-    </div>
-</form>
+<%- include('partials/header') %>
+<div class="container" style ="padding-top: 100px;text-align: center;background-color:white;">
+    <form action="/personal" method="POST">
+        <div class="form-group">
+          <label for="title"><strong>Project Title</strong></label>
+          <textarea type="text" class="form-control" id="title" name="title" style="max-height: 100rem;"></textarea>
+        </div>
+        <div class="form-group">
+          <label for="task"><strong>Tasks</strong> </label>
+          <textarea type="text" class="form-control" id="task" name="task"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+</div>
+<%- include('partials/footer') %>

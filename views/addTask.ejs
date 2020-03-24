@@ -1,3 +1,4 @@
+<%- include('partials/header') %>
 <form action="/group/<%=projectId%>/tasks" method = "POST">
     <div class="row">
         <input type="text" name="Id" placeholder="Collaborator Id">
@@ -6,3 +7,4 @@
     </div>
     <a href="/group/<%=projectId%>/addTask">Add more Collaborators</a>
 </form>
+<%- include('partials/footer') %>
