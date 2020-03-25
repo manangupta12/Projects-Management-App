@@ -1,13 +1,40 @@
-var express = require("express");
-var router = express.Router(); //a new instance of express router and adding routes to this router. 
+var express = require("express"),
+    router = express.Router();
 var Projects = require("../models/P_Project");
 // var middleware = require("../middleware");
 
-router.get("/personal",function(req,res){
-    Projects.find({id:req.User.id},function(err,projects){
+router.get("/",isLoggedIn,function(req,res){
+    Projects.find({user:req.user},function(err,projects){
         if(err) console.log(err);
         else{
-            res.render("personal",{projects:projects});
+            console.log(projects);
+            res.render("personal",{currentUser:req.user,projects:projects});
         }
     })
 });
+
+router.post("/",isLoggedIn,function(req,res){
+    Projects.create({
+        user:req.user,
+        title: req.body.title,
+        task: req.body.task
+    },function(err,project){
+        if(err) console.log(err);
+        else{
+            console.log(project);
+            res.redirect("/personal");
+        }
+    });
+})
+
+router.get("/add",isLoggedIn,function(req,res){
+    res.render("addPersonal");
+})
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+}
+
+module.exports = router;
